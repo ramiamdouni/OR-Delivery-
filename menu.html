@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>مطعمك - OR Delivery</title>
+
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -18,10 +20,11 @@
 <section class="menu">
 
 <div class="card">
-    <img src="pizza.jpg">
+    <img src="pizza.jpg" alt="Pizza">
     <h2>Pizza 4 Fromages</h2>
     <p>بيتزا بالجبن</p>
     <span>18 د.ت</span>
+
     <button onclick="addToCart('Pizza 4 Fromages',18)">
         أضف للسلة
     </button>
@@ -29,10 +32,11 @@
 
 
 <div class="card">
-    <img src="burger.jpg">
+    <img src="burger.jpg" alt="Burger">
     <h2>Burger Maison</h2>
     <p>برغر منزلي</p>
     <span>12 د.ت</span>
+
     <button onclick="addToCart('Burger Maison',12)">
         أضف للسلة
     </button>
@@ -40,10 +44,11 @@
 
 
 <div class="card">
-    <img src="frites.jpg">
+    <img src="frites.jpg" alt="Frites">
     <h2>Frites</h2>
     <p>بطاطا مقلية</p>
     <span>5 د.ت</span>
+
     <button onclick="addToCart('Frites',5)">
         أضف للسلة
     </button>
@@ -53,48 +58,236 @@
 
 
 <div class="cart">
+
 <h2>🛒 طلبك</h2>
+
 <ul id="cart"></ul>
 
 <h3>
 المجموع: <span id="total">0</span> د.ت
 </h3>
 
-<button class="order" onclick="sendOrder()">
-تأكيد الطلب عبر واتساب
+
+<hr>
+
+
+<h2>📦 معلومات التوصيل</h2>
+
+<input 
+type="text" 
+id="clientName" 
+placeholder="اسمك الكامل"
+>
+
+
+<input 
+type="tel" 
+id="phone" 
+placeholder="رقم الهاتف"
+>
+
+
+<input 
+type="text" 
+id="address" 
+placeholder="عنوان التوصيل"
+>
+
+
+<button 
+class="order" 
+onclick="sendOrder()"
+>
+تأكيد الطلب
 </button>
+
+
+<div id="confirmation" style="display:none;">
+
+<h2>✅ تم تأكيد طلبك بنجاح</h2>
+
+<p>شكراً لك على طلبك من OR Delivery 🛵</p>
+
+<p>
+رقم طلبك:
+<strong id="orderNumber"></strong>
+</p>
+
+<p>
+سيتم التواصل معك لتأكيد الطلب.
+</p>
 
 </div>
 
 
-<script>
+<p id="status"></p>
+
+</div>
+
+
+<script type="module">
+
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+
+import { 
+getFirestore, 
+collection, 
+addDoc, 
+serverTimestamp 
+} from 
+"https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyCA0-yi6utUJaq4DeW_nIAqbMMCvHA5YV8",
+
+authDomain: "or-delivery.firebaseapp.com",
+
+projectId: "or-delivery",
+
+storageBucket: "or-delivery.firebasestorage.app",
+
+messagingSenderId: "861150247174",
+
+appId: "1:861150247174:web:a53b38d8e85a5b55b78687",
+
+measurementId: "G-QF1CYPZ2XJ"
+
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
 
 let total = 0;
-let items=[];
 
-function addToCart(name,price){
+let items = [];
 
-items.push(name);
+
+window.addToCart = function(name, price) {
+
+items.push({
+name: name,
+price: price
+});
+
 total += price;
 
-document.getElementById("cart").innerHTML =
-items.map(i=>"<li>"+i+"</li>").join("");
 
-document.getElementById("total").innerHTML=total;
+document.getElementById("cart").innerHTML =
+
+items.map(item =>
+
+"<li>" + 
+item.name + 
+" - " + 
+item.price + 
+" د.ت</li>"
+
+).join("");
+
+
+document.getElementById("total").innerHTML = total;
+
+};
+
+
+window.sendOrder = async function() {
+
+const clientName = 
+document.getElementById("clientName").value.trim();
+
+const phone = 
+document.getElementById("phone").value.trim();
+
+const address = 
+document.getElementById("address").value.trim();
+
+
+if (items.length === 0) {
+
+alert("⚠️ أضف منتج للسلة أولاً");
+
+return;
+
 }
 
 
-function sendOrder(){
+if (!clientName || !phone || !address) {
 
-let message="طلب جديد من OR Delivery:%0A";
-message += items.join("%0A");
-message += "%0Aالمجموع: "+total+" د.ت";
+alert("⚠️ الرجاء إدخال الاسم ورقم الهاتف والعنوان");
 
-window.open(
-"https://wa.me/21694773359?text="+message
+return;
+
+}
+
+
+const button = 
+document.querySelector(".order");
+
+button.disabled = true;
+
+button.innerText = "جاري إرسال الطلب...";
+
+
+try {
+
+
+const orderRef = await addDoc(
+
+collection(db, "orders"),
+
+{
+
+clientName: clientName,
+
+phone: phone,
+
+address: address,
+
+items: items,
+
+total: total,
+
+status: "pending",
+
+createdAt: serverTimestamp()
+
+}
+
 );
 
+
+document.getElementById("confirmation").style.display = "block";
+
+document.getElementById("orderNumber").innerText = orderRef.id;
+
+
+document.getElementById("status").innerText = 
+"تم إرسال الطلب إلى OR Delivery";
+
+
+button.style.display = "none";
+
+
+} catch (error) {
+
+
+console.error(error);
+
+alert("❌ صار خطأ في إرسال الطلب");
+
+button.disabled = false;
+
+button.innerText = "تأكيد الطلب";
+
 }
+
+};
 
 </script>
 
