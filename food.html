@@ -1,0 +1,157 @@
+[03:14, 25/07/2026] Rami Amdouni: y: "AIzaSyCA0-yi…
+[03:14, 25/07/2026] Rami Amdouni: <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Food - OR Delivery</title>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+    <h1>🍔 Food</h1>
+    <p>اختار المطعم اللي تحب تطلب منو</p>
+</header>
+
+<section class="menu">
+
+    <h2>🍽️ المطاعم المتاحة</h2>
+
+    <div id="restaurants">
+        <p>جاري تحميل المطاعم...</p>
+    </div>
+
+</section>
+
+
+<script type="module">
+
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+
+import {
+    getFirestore,
+    collection,
+    getDocs
+} from
+"https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+
+const firebaseConfig = {
+
+    apiKey: "AIzaSyCA0-yi6utUJaq4DeW_nIAqbMMCvHA5YV8",
+
+    authDomain: "or-delivery.firebaseapp.com",
+
+    projectId: "or-delivery",
+
+    storageBucket: "or-delivery.firebasestorage.app",
+
+    messagingSenderId: "861150247174",
+
+    appId: "1:861150247174:web:a53b38d8e85a5b55b78687",
+
+    measurementId: "G-QF1CYPZ2XJ"
+
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+
+const restaurantsContainer =
+document.getElementById("restaurants");
+
+
+async function loadRestaurants() {
+
+    try {
+
+        const snapshot =
+        await getDocs(collection(db, "restaurants"));
+
+
+        restaurantsContainer.innerHTML = "";
+
+
+        if (snapshot.empty) {
+
+            restaurantsContainer.innerHTML =
+            "<p>ما فماش مطاعم متاحة توّا.</p>";
+
+            return;
+
+        }
+
+
+        snapshot.forEach((doc) => {
+
+            const restaurant = doc.data();
+
+
+            // نظهر كان المطاعم المفعلة
+            if (restaurant.Activé !== true) {
+                return;
+            }
+
+
+            const card =
+            document.createElement("div");
+
+            card.className = "card";
+
+
+            card.innerHTML = `
+
+                <h2>🍽️ ${restaurant.Name || "مطعم"}</h2>
+
+                <p>📍 ${restaurant.Adresse || ""}</p>
+
+                <p>🍴 ${restaurant.Catégorie || ""}</p>
+
+                <p>📞 ${restaurant.Phone || ""}</p>
+
+                <button onclick="openRestaurant('${doc.id}')">
+                    شوف القائمة
+                </button>
+
+            `;
+
+
+            restaurantsContainer.appendChild(card);
+
+        });
+
+
+    } catch (error) {
+
+        console.error("Firebase Error:", error);
+
+        restaurantsContainer.innerHTML =
+        "<p>❌ صار خطأ في تحميل المطاعم.</p>";
+
+    }
+
+}
+
+
+window.openRestaurant = function(id) {
+
+    window.location.href =
+    "menu.html?restaurantId=" + id;
+
+};
+
+
+loadRestaurants();
+
+</script>
+
+</body>
+</html>
