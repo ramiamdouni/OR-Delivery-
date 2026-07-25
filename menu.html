@@ -277,10 +277,9 @@ button.style.display = "none";
 
 } catch (error) {
 
+console.error("Firebase Error:", error);
+alert("❌ خطأ: " + error.message);
 
-console.error(error);
-
-alert("❌ صار خطأ في إرسال الطلب");
 
 button.disabled = false;
 
