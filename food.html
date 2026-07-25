@@ -1,5 +1,4 @@
-[03:14, 25/07/2026] Rami Amdouni: y: "AIzaSyCA0-yi…
-[03:14, 25/07/2026] Rami Amdouni: <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -19,7 +18,7 @@
 
 <section class="menu">
 
-    <h2>🍽️ المطاعم المتاحة</h2>
+    <h2>🍽️ المطاعم</h2>
 
     <div id="restaurants">
         <p>جاري تحميل المطاعم...</p>
@@ -30,15 +29,15 @@
 
 <script type="module">
 
-import { initializeApp } from
-"https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
 
 import {
     getFirestore,
     collection,
     getDocs
-} from
-"https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+}
+from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 
 const firebaseConfig = {
@@ -53,7 +52,7 @@ const firebaseConfig = {
 
     messagingSenderId: "861150247174",
 
-    appId: "1:861150247174:web:a53b38d8e85a5b55b78687",
+    appId: "1:861150247174:web:a53b38e8d85a5b55b78687",
 
     measurementId: "G-QF1CYPZ2XJ"
 
@@ -64,18 +63,21 @@ const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 
-
 const restaurantsContainer =
 document.getElementById("restaurants");
 
 
 async function loadRestaurants() {
 
+    restaurantsContainer.innerHTML =
+    "<p>⏳ جاري الاتصال بقاعدة البيانات...</p>";
+
     try {
 
         const snapshot =
         await getDocs(collection(db, "restaurants"));
 
+        console.log("Restaurants:", snapshot.size);
 
         restaurantsContainer.innerHTML = "";
 
@@ -83,22 +85,33 @@ async function loadRestaurants() {
         if (snapshot.empty) {
 
             restaurantsContainer.innerHTML =
-            "<p>ما فماش مطاعم متاحة توّا.</p>";
+            "<p>⚠️ ما فماش مطاعم في قاعدة البيانات.</p>";
 
             return;
 
         }
 
 
+        let count = 0;
+
+
         snapshot.forEach((doc) => {
 
             const restaurant = doc.data();
 
+            console.log("Restaurant:", restaurant);
 
-            // نظهر كان المطاعم المفعلة
-            if (restaurant.Active !== true) {
+
+            // إذا Active موجودة وقيمتها false، ما نظهروش المطعم
+            if (
+                restaurant.Active !== undefined &&
+                restaurant.Active !== true
+            ) {
                 return;
             }
+
+
+            count++;
 
 
             const card =
@@ -109,19 +122,37 @@ async function loadRestaurants() {
 
             card.innerHTML = `
 
-                <h2>🍽️ ${restaurant.Name || "مطعم"}</h2>
+                <h2>🍽️ ${restaurant.Name || "مطعم بدون اسم"}</h2>
 
-                <p>📍 ${restaurant.Adresse || ""}</p>
+                <p>
+                    📍 ${restaurant.Adresse || "العنوان غير متوفر"}
+                </p>
 
-                <p>🍴 ${restaurant.Catégorie || ""}</p>
+                <p>
+                    🍴 ${restaurant.Catégorie || "مطعم"}
+                </p>
 
-                <p>📞 ${restaurant.Phone || ""}</p>
+                <p>
+                    📞 ${restaurant.Phone || "غير متوفر"}
+                </p>
 
-                <button onclick="openRestaurant('${doc.id}')">
+                <button class="restaurant-button">
                     شوف القائمة
                 </button>
 
             `;
+
+
+            const button =
+            card.querySelector(".restaurant-button");
+
+
+            button.addEventListener("click", function() {
+
+                window.location.href =
+                "menu.html?restaurantId=" + doc.id;
+
+            });
 
 
             restaurantsContainer.appendChild(card);
@@ -129,24 +160,31 @@ async function loadRestaurants() {
         });
 
 
+        if (count === 0) {
+
+            restaurantsContainer.innerHTML =
+            "<p>⚠️ ما فماش مطاعم مفعّلة توّا.</p>";
+
+        }
+
+
     } catch (error) {
 
         console.error("Firebase Error:", error);
 
-        restaurantsContainer.innerHTML =
-        "<p>❌ صار خطأ في تحميل المطاعم.</p>";
+        restaurantsContainer.innerHTML = `
+
+            <p>❌ صار خطأ في تحميل المطاعم.</p>
+
+            <p>
+                ${error.message}
+            </p>
+
+        `;
 
     }
 
 }
-
-
-window.openRestaurant = function(id) {
-
-    window.location.href =
-    "menu.html?restaurantId=" + id;
-
-};
 
 
 loadRestaurants();
