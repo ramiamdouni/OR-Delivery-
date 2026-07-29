@@ -1,296 +1,608 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-<meta charset="UTF-8"> 
+
+<meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>مطعمك - OR Delivery</title>
 
 <link rel="stylesheet" href="style.css">
+
 </head>
+
 
 <body>
 
+
 <header>
+
     <h1>🍽️ مطعمك</h1>
-    <p>اطلب أكلك ويوصلك مع OR Delivery 🛵</p>
+
+    <p>
+        اطلب أكلك ويوصلك مع OR Delivery 🛵
+    </p>
+
 </header>
+
 
 
 <section class="menu">
 
+
 <div class="card">
+
     <img src="pizza.jpg" alt="Pizza">
+
     <h2>Pizza 4 Fromages</h2>
+
     <p>بيتزا بالجبن</p>
+
     <span>18 د.ت</span>
 
     <button onclick="addToCart('Pizza 4 Fromages',18)">
         أضف للسلة
     </button>
+
 </div>
 
 
+
 <div class="card">
+
     <img src="burger.jpg" alt="Burger">
+
     <h2>Burger Maison</h2>
+
     <p>برغر منزلي</p>
+
     <span>12 د.ت</span>
 
     <button onclick="addToCart('Burger Maison',12)">
         أضف للسلة
     </button>
+
 </div>
 
 
+
 <div class="card">
+
     <img src="frites.jpg" alt="Frites">
+
     <h2>Frites</h2>
+
     <p>بطاطا مقلية</p>
+
     <span>5 د.ت</span>
 
     <button onclick="addToCart('Frites',5)">
         أضف للسلة
     </button>
+
 </div>
+
 
 </section>
 
 
+
 <div class="cart">
+
 
 <h2>🛒 طلبك</h2>
 
+
 <ul id="cart"></ul>
 
+
 <h3>
-المجموع: <span id="total">0</span> د.ت
+
+المجموع:
+
+<span id="total">0</span>
+
+د.ت
+
 </h3>
+
 
 
 <hr>
 
 
+
 <h2>📦 معلومات التوصيل</h2>
 
-<input 
-type="text" 
-id="clientName" 
+
+
+<input
+type="text"
+id="clientName"
 placeholder="اسمك الكامل"
 >
 
 
-<input 
-type="tel" 
-id="phone" 
+
+<input
+type="tel"
+id="phone"
 placeholder="رقم الهاتف"
 >
 
 
-<input 
-type="text" 
-id="address" 
+
+<input
+type="text"
+id="address"
 placeholder="عنوان التوصيل"
 >
 
 
-<button 
-class="order" 
+
+<button
+class="order"
 onclick="sendOrder()"
 >
+
 تأكيد الطلب
+
 </button>
 
 
-<div id="confirmation" style="display:none;">
 
-<h2>✅ تم تأكيد طلبك بنجاح</h2>
+<div
+id="confirmation"
+style="display:none;"
+>
 
-<p>شكراً لك على طلبك من OR Delivery 🛵</p>
+
+<h2>
+✅ تم تأكيد طلبك بنجاح
+</h2>
+
 
 <p>
-رقم طلبك:
-<strong id="orderNumber"></strong>
+شكراً لك على طلبك من OR Delivery 🛵
 </p>
+
+
+<p>
+
+رقم طلبك:
+
+<strong id="orderNumber"></strong>
+
+</p>
+
 
 <p>
 سيتم التواصل معك لتأكيد الطلب.
 </p>
 
+
 </div>
+
 
 
 <p id="status"></p>
 
+
 </div>
+
 
 
 <script type="module">
 
-import { initializeApp } from 
-"https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
 
-import { 
-getFirestore, 
-collection, 
-addDoc, 
-serverTimestamp 
-} from 
-"https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+// ======================================
+// Firebase
+// ======================================
+
+
+import { initializeApp }
+
+from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+
+
+import {
+
+    getFirestore,
+
+    collection,
+
+    addDoc,
+
+    serverTimestamp
+
+}
+
+from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+
+
+// ======================================
+// Firebase Configuration
+// نفس المشروع الجديد
+// ======================================
 
 
 const firebaseConfig = {
 
-apiKey: "AIzaSyCA0-yi6utUJaq4DeW_nIAqbMMCvHA5YV8",
+    apiKey: "AIzaSyCxLawlbfVBlt7DjYzMnfW3WIMvbgtsmQI",
 
-authDomain: "or-delivery.firebaseapp.com",
+    authDomain: "or-delivery-e0a82.firebaseapp.com",
 
-projectId: "or-delivery",
+    projectId: "or-delivery-e0a82",
 
-storageBucket: "or-delivery.firebasestorage.app",
+    storageBucket: "or-delivery-e0a82.firebasestorage.app",
 
-messagingSenderId: "861150247174",
+    messagingSenderId: "491769193881",
 
-appId: "1:861150247174:web:a53b38d8e85a5b55b78687",
+    appId: "1:491769193881:web:67159246794a957f0edf08",
 
-measurementId: "G-QF1CYPZ2XJ"
+    measurementId: "G-TWHMY1TCGV"
 
 };
+
+
+
+// ======================================
+// Initialize Firebase
+// ======================================
 
 
 const app = initializeApp(firebaseConfig);
 
+
 const db = getFirestore(app);
+
+
+
+console.log("🔥 OR Delivery Firebase Connected!");
+
+
+console.log("🔥 Orders Firestore Ready!");
+
+
+
+// ======================================
+// Cart
+// ======================================
 
 
 let total = 0;
 
+
 let items = [];
+
+
+
+// ======================================
+// Add Product To Cart
+// ======================================
 
 
 window.addToCart = function(name, price) {
 
-items.push({
-name: name,
-price: price
-});
 
-total += price;
+    items.push({
 
+        name: name,
 
-document.getElementById("cart").innerHTML =
+        price: price
 
-items.map(item =>
-
-"<li>" + 
-item.name + 
-" - " + 
-item.price + 
-" د.ت</li>"
-
-).join("");
+    });
 
 
-document.getElementById("total").innerHTML = total;
+    total += price;
+
+
+
+    document.getElementById("cart").innerHTML =
+
+    items.map(item =>
+
+        "<li>" +
+
+        item.name +
+
+        " - " +
+
+        item.price +
+
+        " د.ت</li>"
+
+    ).join("");
+
+
+
+    document.getElementById("total").innerHTML =
+
+    total;
+
 
 };
+
+
+
+// ======================================
+// Send Order
+// ======================================
 
 
 window.sendOrder = async function() {
 
-const clientName = 
-document.getElementById("clientName").value.trim();
 
-const phone = 
-document.getElementById("phone").value.trim();
+    const clientName =
 
-const address = 
-document.getElementById("address").value.trim();
+    document
 
+    .getElementById("clientName")
 
-if (items.length === 0) {
+    .value
 
-alert("⚠️ أضف منتج للسلة أولاً");
-
-return;
-
-}
+    .trim();
 
 
-if (!clientName || !phone || !address) {
 
-alert("⚠️ الرجاء إدخال الاسم ورقم الهاتف والعنوان");
+    const phone =
 
-return;
+    document
 
-}
+    .getElementById("phone")
 
+    .value
 
-const button = 
-document.querySelector(".order");
-
-button.disabled = true;
-
-button.innerText = "جاري إرسال الطلب...";
-console.log("بدأ إرسال الطلب إلى Firebase");
+    .trim();
 
 
-try {
+
+    const address =
+
+    document
+
+    .getElementById("address")
+
+    .value
+
+    .trim();
 
 
-const orderRef = await addDoc(
 
-collection(db, "orders"),
+    // Check Cart
 
-{
-
-clientName: clientName,
-
-phone: phone,
-
-address: address,
-
-items: items,
-
-total: total,
-
-status: "pending",
-
-createdAt: serverTimestamp()
-
-}
-
-);
+    if (items.length === 0) {
 
 
-document.getElementById("confirmation").style.display = "block";
+        alert(
 
-document.getElementById("orderNumber").innerText = orderRef.id;
+            "⚠️ أضف منتج للسلة أولاً"
 
-
-document.getElementById("status").innerText = 
-"تم إرسال الطلب إلى OR Delivery";
+        );
 
 
-button.style.display = "none";
+        return;
+
+    }
 
 
-} catch (error) {
 
-console.error("Firebase Error:", error);
-alert("❌ خطأ: " + error.message);
+    // Check Customer Info
+
+    if (
+
+        !clientName ||
+
+        !phone ||
+
+        !address
+
+    ) {
 
 
-button.disabled = false;
+        alert(
 
-button.innerText = "تأكيد الطلب";
+            "⚠️ الرجاء إدخال الاسم ورقم الهاتف والعنوان"
 
-}
+        );
+
+
+        return;
+
+    }
+
+
+
+    const button =
+
+    document.querySelector(".order");
+
+
+
+    button.disabled = true;
+
+
+    button.innerText =
+
+    "جاري إرسال الطلب...";
+
+
+
+    console.log(
+
+        "📦 بدأ إرسال الطلب إلى Firebase"
+
+    );
+
+
+
+    try {
+
+
+        // Add Order To Firestore
+
+        const orderRef =
+
+        await addDoc(
+
+            collection(
+
+                db,
+
+                "orders"
+
+            ),
+
+            {
+
+                clientName:
+
+                clientName,
+
+
+                phone:
+
+                phone,
+
+
+                address:
+
+                address,
+
+
+                items:
+
+                items,
+
+
+                total:
+
+                total,
+
+
+                status:
+
+                "pending",
+
+
+                createdAt:
+
+                serverTimestamp()
+
+            }
+
+        );
+
+
+
+        // Success
+
+        document
+
+        .getElementById(
+
+            "confirmation"
+
+        )
+
+        .style.display =
+
+        "block";
+
+
+
+        document
+
+        .getElementById(
+
+            "orderNumber"
+
+        )
+
+        .innerText =
+
+        orderRef.id;
+
+
+
+        document
+
+        .getElementById(
+
+            "status"
+
+        )
+
+        .innerText =
+
+        "تم إرسال الطلب إلى OR Delivery";
+
+
+
+        button.style.display =
+
+        "none";
+
+
+
+        console.log(
+
+            "✅ Order Created:",
+
+            orderRef.id
+
+        );
+
+
+    }
+
+
+    catch (error) {
+
+
+        console.error(
+
+            "❌ Firebase Error:",
+
+            error
+
+        );
+
+
+        alert(
+
+            "❌ خطأ: " +
+
+            error.message
+
+        );
+
+
+
+        button.disabled =
+
+        false;
+
+
+
+        button.innerText =
+
+        "تأكيد الطلب";
+
+
+    }
+
 
 };
+
 
 </script>
 
 
+
 </body>
+
 </html>
