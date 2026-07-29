@@ -52,7 +52,7 @@ const firebaseConfig = {
 
     messagingSenderId: "861150247174",
 
-    appId: "1:861150247174:web:a53b38e8d85a5b55b78687",
+    appId: "1:861150247174:web:a53b38d8e85a5b55b78687",
 
     measurementId: "G-QF1CYPZ2XJ"
 
@@ -102,10 +102,10 @@ async function loadRestaurants() {
             console.log("Restaurant:", restaurant);
 
 
-            // إذا Active موجودة وقيمتها false، ما نظهروش المطعم
+            // نعرضو كان المطاعم اللي active متاعها true
             if (
-                restaurant.Active !== undefined &&
-                restaurant.Active !== true
+                restaurant.active !== undefined &&
+                restaurant.active !== true
             ) {
                 return;
             }
@@ -122,18 +122,18 @@ async function loadRestaurants() {
 
             card.innerHTML = `
 
-                <h2>🍽️ ${restaurant.Name || "مطعم بدون اسم"}</h2>
+                <h2>🍽️ ${restaurant.name || "مطعم بدون اسم"}</h2>
 
                 <p>
-                    📍 ${restaurant.Adresse || "العنوان غير متوفر"}
+                    📍 ${restaurant.address || "العنوان غير متوفر"}
                 </p>
 
                 <p>
-                    🍴 ${restaurant.Catégorie || "مطعم"}
+                    🍴 ${restaurant.category || "مطعم"}
                 </p>
 
                 <p>
-                    📞 ${restaurant.Phone || "غير متوفر"}
+                    📞 ${restaurant.phone || "غير متوفر"}
                 </p>
 
                 <button class="restaurant-button">
@@ -179,17 +179,3 @@ async function loadRestaurants() {
             <p>
                 ${error.message}
             </p>
-
-        `;
-
-    }
-
-}
-
-
-loadRestaurants();
-
-</script>
-
-</body>
-</html>
