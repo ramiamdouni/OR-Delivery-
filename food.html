@@ -1,181 +1,421 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Food - OR Delivery</title>
+    <meta charset="UTF-8">
 
-<link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Food - OR Delivery</title>
+
+    <link rel="stylesheet" href="style.css">
+
 </head>
+
 
 <body>
 
+
 <header>
+
     <h1>🍔 Food</h1>
-    <p>اختار المطعم اللي تحب تطلب منو</p>
+
+    <p>
+        اختار المطعم اللي تحب تطلب منو
+    </p>
+
 </header>
+
 
 <section class="menu">
 
     <h2>🍽️ المطاعم</h2>
 
+
     <div id="restaurants">
-        <p>جاري تحميل المطاعم...</p>
+
+        <p>
+            ⏳ جاري تحميل المطاعم...
+        </p>
+
     </div>
+
 
 </section>
 
 
+
 <script type="module">
 
+
+// ===============================
+// Firebase
+// ===============================
+
+
 import { initializeApp }
+
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
 
+
 import {
+
     getFirestore,
+
     collection,
+
     getDocs
+
 }
+
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+
+
+// ===============================
+// Firebase Configuration
+// نفس Firebase متاع index.html
+// ===============================
 
 
 const firebaseConfig = {
 
-    apiKey: "AIzaSyCA0-yi6utUJaq4DeW_nIAqbMMCvHA5YV8",
+    apiKey: "AIzaSyCxLawlbfVBlt7DjYzMnfW3WIMvbgtsmQI",
 
-    authDomain: "or-delivery.firebaseapp.com",
+    authDomain: "or-delivery-e0a82.firebaseapp.com",
 
-    projectId: "or-delivery",
+    projectId: "or-delivery-e0a82",
 
-    storageBucket: "or-delivery.firebasestorage.app",
+    storageBucket: "or-delivery-e0a82.firebasestorage.app",
 
-    messagingSenderId: "861150247174",
+    messagingSenderId: "491769193881",
 
-    appId: "1:861150247174:web:a53b38d8e85a5b55b78687",
+    appId: "1:491769193881:web:67159246794a957f0edf08",
 
-    measurementId: "G-QF1CYPZ2XJ"
+    measurementId: "G-TWHMY1TCGV"
 
 };
+
+
+
+// ===============================
+// Initialize Firebase
+// ===============================
 
 
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 
+
+
+// ===============================
+// Restaurants Container
+// ===============================
+
+
 const restaurantsContainer =
+
 document.getElementById("restaurants");
+
+
+
+// ===============================
+// Load Restaurants
+// ===============================
 
 
 async function loadRestaurants() {
 
+
     restaurantsContainer.innerHTML =
+
     "<p>⏳ جاري الاتصال بقاعدة البيانات...</p>";
+
 
     try {
 
-        const snapshot =
-        await getDocs(collection(db, "restaurants"));
 
-        console.log("Restaurants:", snapshot.size);
+        // Get restaurants collection
+
+        const snapshot =
+
+        await getDocs(
+
+            collection(db, "restaurants")
+
+        );
+
+
+        console.log(
+
+            "🔥 Restaurants found:",
+
+            snapshot.size
+
+        );
+
+
+        // Clear loading message
 
         restaurantsContainer.innerHTML = "";
 
 
+
+        // ===============================
+        // No Restaurants
+        // ===============================
+
+
         if (snapshot.empty) {
 
-            restaurantsContainer.innerHTML =
-            "<p>⚠️ ما فماش مطاعم في قاعدة البيانات.</p>";
+
+            restaurantsContainer.innerHTML = `
+
+                <p>
+
+                    ⚠️ ما فماش مطاعم في قاعدة البيانات.
+
+                </p>
+
+            `;
+
 
             return;
 
         }
 
 
+
         let count = 0;
+
+
+
+        // ===============================
+        // Display Restaurants
+        // ===============================
 
 
         snapshot.forEach((doc) => {
 
+
             const restaurant = doc.data();
 
-            console.log("Restaurant:", restaurant);
+
+            console.log(
+
+                "🍽️ Restaurant:",
+
+                restaurant
+
+            );
 
 
-            // نعرضو كان المطاعم اللي active متاعها true
+
+            // Show only active restaurants
+
             if (
+
                 restaurant.active !== undefined &&
+
                 restaurant.active !== true
+
             ) {
+
                 return;
+
             }
+
 
 
             count++;
 
 
+
+            // Create Card
+
             const card =
+
             document.createElement("div");
+
 
             card.className = "card";
 
 
+
             card.innerHTML = `
 
-                <h2>🍽️ ${restaurant.name || "مطعم بدون اسم"}</h2>
+                <h2>
+
+                    🍽️
+
+                    ${restaurant.name || "مطعم بدون اسم"}
+
+                </h2>
+
 
                 <p>
-                    📍 ${restaurant.address || "العنوان غير متوفر"}
+
+                    📍
+
+                    ${restaurant.address || "العنوان غير متوفر"}
+
                 </p>
 
-                <p>
-                    🍴 ${restaurant.category || "مطعم"}
-                </p>
 
                 <p>
-                    📞 ${restaurant.phone || "غير متوفر"}
+
+                    🍴
+
+                    ${restaurant.category || "مطعم"}
+
                 </p>
+
+
+                <p>
+
+                    📞
+
+                    ${restaurant.phone || "غير متوفر"}
+
+                </p>
+
 
                 <button class="restaurant-button">
+
                     شوف القائمة
+
                 </button>
 
             `;
 
 
+
+            // Button
+
             const button =
-            card.querySelector(".restaurant-button");
+
+            card.querySelector(
+
+                ".restaurant-button"
+
+            );
 
 
-            button.addEventListener("click", function() {
 
-                window.location.href =
-                "menu.html?restaurantId=" + doc.id;
+            // Open Restaurant Menu
 
-            });
+            button.addEventListener(
+
+                "click",
+
+                function() {
 
 
-            restaurantsContainer.appendChild(card);
+                    window.location.href =
+
+                    "menu.html?restaurantId=" +
+
+                    doc.id;
+
+
+                }
+
+            );
+
+
+
+            // Add Card
+
+            restaurantsContainer.appendChild(
+
+                card
+
+            );
+
 
         });
 
 
+
+        // ===============================
+        // No Active Restaurants
+        // ===============================
+
+
         if (count === 0) {
 
-            restaurantsContainer.innerHTML =
-            "<p>⚠️ ما فماش مطاعم مفعّلة توّا.</p>";
+
+            restaurantsContainer.innerHTML = `
+
+                <p>
+
+                    ⚠️ ما فماش مطاعم مفعّلة توّا.
+
+                </p>
+
+            `;
+
 
         }
 
 
-    } catch (error) {
+    }
 
-        console.error("Firebase Error:", error);
+
+    catch (error) {
+
+
+        console.error(
+
+            "❌ Firebase Error:",
+
+            error
+
+        );
+
 
         restaurantsContainer.innerHTML = `
 
-            <p>❌ صار خطأ في تحميل المطاعم.</p>
+            <div class="card">
 
-            <p>
-                ${error.message}
-            </p>
+                <h3>
+
+                    ❌ صار خطأ في تحميل المطاعم
+
+                </h3>
+
+
+                <p>
+
+                    ${error.message}
+
+                </p>
+
+            </div>
+
+        `;
+
+
+    }
+
+
+}
+
+
+
+// ===============================
+// Start
+// ===============================
+
+
+loadRestaurants();
+
+
+</script>
+
+
+</body>
+
+</html>
