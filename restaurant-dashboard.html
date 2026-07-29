@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Restaurant Dashboard - OR Delivery</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h1>🍽️ Restaurant Dashboard</h1>
+
+    <p>إدارة الطلبات الجديدة</p>
+
+</header>
+
+
+
+<section class="menu">
+
+    <h2>📦 الطلبات</h2>
+
+    <div id="orders">
+
+        <p>⏳ جاري تحميل الطلبات...</p>
+
+    </div>
+
+</section>
+
+
+
+<script type="module">
+
+
+// Firebase
+
+import { initializeApp }
+
+from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+
+
+import {
+
+    getFirestore,
+
+    collection,
+
+    getDocs,
+
+    query,
+
+    orderBy,
+
+    doc,
+
+    updateDoc
+
+}
+
+from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+
+
+// Firebase الجديد
+
+const firebaseConfig = {
+
+    apiKey: "AIzaSyCxLawlbfVBlt7DjYzMnfW3WIMvbgtsmQI",
+
+    authDomain: "or-delivery-e0a82.firebaseapp.com",
+
+    projectId: "or-delivery-e0a82",
+
+    storageBucket: "or-delivery-e0a82.firebasestorage.app",
+
+    messagingSenderId: "491769193881",
+
+    appId: "1:491769193881:web:67159246794a957f0edf08",
+
+    measurementId: "G-TWHMY1TCGV"
+
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+
+console.log("🔥 Restaurant Dashboard Connected!");
+
+
+
+const ordersContainer =
+
+document.getElementById("orders");
+
+
+
+// Load Orders
+
+async function loadOrders() {
+
+
+    ordersContainer.innerHTML =
+
+    "<p>⏳ جاري تحميل الطلبات...</p>";
+
+
+    try {
+
+
+        const ordersQuery = query(
+
+            collection(db, "orders"),
+
+            orderBy("createdAt", "desc")
+
+        );
+
+
+        const snapshot =
+
+        await getDocs(ordersQuery);
+
+
+        ordersContainer.innerHTML = "";
+
+
+        if (snapshot.empty) {
+
+
+            ordersContainer.innerHTML = `
+
+                <p>
+
+                    📭 ما فماش طلبات توّا.
+
+                </p>
+
+            `;
+
+
+            return;
+
+        }
+
+
+
+        snapshot.forEach((orderDoc) => {
+
+
+            const order = orderDoc.data();
+
+
+            const card =
+
+            document.createElement("div");
+
+
+            card.className = "card";
+
+
+
+            let itemsHTML = "";
+
+
+
+            if (order.items) {
+
+
+                itemsHTML = order.items.map(item => `
+
+                    <li>
+
+                        ${item.name}
+
+                        - ${item.price} د.ت
+
+                    </li>
+
+                `).join("");
+
+            }
+
+
+
+            card.innerHTML = `
+
+                <h2>📦 طلب جديد</h2>
+
+                <p>
+
+                    👤 الحريف:
+
+                    ${order.clientName || "غير معروف"}
+
+                </p>
+
+
+                <p>
+
+                    📞 الهاتف:
+
+                    ${order.phone || "غير متوفر"}
+
+                </p>
+
+
+                <p>
+
+                    📍 العنوان:
+
+                    ${order.address || "غير متوفر"}
+
+                </p>
+
+
+                <h3>🍔 الطلب:</h3>
+
+                <ul>
+
+                    ${itemsHTML}
+
+                </ul>
+
+
+                <h3>
+
+                    💰 المجموع:
+
+                    ${order.total || 0} د.ت
+
+                </h3>
+
+
+                <p>
+
+                    الحالة:
+
+                    <strong>
+
+                        ${order.status || "pending"}
+
+                    </strong>
+
+                </p>
+
+
+                <button
+
+                    class="accept-button"
+
+                    data-id="${orderDoc.id}"
+
+                >
+
+                    ✅ قبول الطلب
+
+                </button>
+
+
+                <button
+
+                    class="reject-button"
+
+                    data-id="${orderDoc.id}"
+
+                >
+
+                    ❌ رفض الطلب
+
+                </button>
+
+            `;
+
+
+
+            const acceptButton =
+
+            card.querySelector(
+
+                ".accept-button"
+
+            );
+
+
+            const rejectButton =
+
+            card.querySelector(
+
+                ".reject-button"
+
+            );
+
+
+
+            acceptButton.addEventListener(
+
+                "click",
+
+                () => updateOrderStatus(
+
+                    orderDoc.id,
+
+                    "accepted"
+
+                )
+
+            );
+
+
+
+            rejectButton.addEventListener(
+
+                "click",
+
+                () => updateOrderStatus(
+
+                    orderDoc.id,
+
+                    "rejected"
+
+                )
+
+            );
+
+
+
+            ordersContainer.appendChild(card);
+
+        });
+
+
+    }
+
+    catch (error) {
+
+
+        console.error(
+
+            "❌ Firebase Error:",
+
+            error
+
+        );
+
+
+        ordersContainer.innerHTML = `
+
+            <div class="card">
+
+                <h3>
+
+                    ❌ صار خطأ
+
+                </h3>
+
+                <p>
+
+                    ${error.message}
+
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+
+// Update Order Status
+
+async function updateOrderStatus(
+
+    orderId,
+
+    newStatus
+
+) {
+
+
+    try {
+
+
+        await updateDoc(
+
+            doc(
+
+                db,
+
+                "orders",
+
+                orderId
+
+            ),
+
+            {
+
+                status: newStatus
+
+            }
+
+        );
+
+
+        alert(
+
+            newStatus === "accepted"
+
+            ? "✅ تم قبول الطلب"
+
+            : "❌ تم رفض الطلب"
+
+        );
+
+
+        loadOrders();
+
+
+    }
+
+    catch (error) {
+
+
+        console.error(
+
+            "❌ Update Error:",
+
+            error
+
+        );
+
+
+        alert(
+
+            "❌ صار خطأ: " +
+
+            error.message
+
+        );
+
+    }
+
+}
+
+
+
+// Start
+
+loadOrders();
+
+
+</script>
+
+
+</body>
+
+</html>
