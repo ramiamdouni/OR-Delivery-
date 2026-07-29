@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>OR Delivery</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <header>
+
     <div class="logo">
         <h2>🚚 OR Delivery</h2>
     </div>
@@ -22,150 +25,242 @@
         <a href="#">Express</a>
         <a href="#">Contact</a>
     </nav>
+
 </header>
+
 
 <section class="hero">
 
     <div class="hero-text">
+
         <h1>Fast Delivery Across Tunisia</h1>
 
         <p>
             One platform for Food, Colis,
             Personal Shopping and Express Delivery.
         </p>
+
     </div>
 
+
     <div class="hero-image">
+
         <img src="delivery.png" alt="Delivery">
+
     </div>
 
 </section>
+
 
 <section class="services">
 
-<h2>Our Services</h2>
+    <h2>Our Services</h2>
 
-<div class="grid">
 
-<div class="card">
-<h3>🍔 Food</h3>
-<p>
-Restaurants can upload menus,
-prices, photos and receive orders instantly.
-</p>
+    <div class="grid">
 
-<button onclick="window.location.href='food.html'">
-Explore
-</button>
 
-</div>
+        <div class="card">
 
-<div class="card">
-<h3>📦 Colis</h3>
-<p>
-Delivery service for businesses,
-online stores and personal packages.
-</p>
-<button>Explore</button>
-</div>
+            <h3>🍔 Food</h3>
 
-<div class="card">
-<h3>🛒 Personal Shopping</h3>
-<p>
-Need a charger, groceries,
-gift or anything else?
-We buy it and deliver it to you.
-</p>
-<button>Explore</button>
-</div>
+            <p>
+                Restaurants can upload menus,
+                prices, photos and receive orders instantly.
+            </p>
 
-<div class="card">
-<h3>⚡ Express Delivery</h3>
-<p>
-Urgent delivery in the shortest
-possible time.
-</p>
-<button>Explore</button>
-</div>
+            <button onclick="window.location.href='food.html'">
+                Explore
+            </button>
 
-</div>
+        </div>
+
+
+        <div class="card">
+
+            <h3>📦 Colis</h3>
+
+            <p>
+                Delivery service for businesses,
+                online stores and personal packages.
+            </p>
+
+            <button>
+                Explore
+            </button>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>🛒 Personal Shopping</h3>
+
+            <p>
+                Need a charger, groceries,
+                gift or anything else?
+                We buy it and deliver it to you.
+            </p>
+
+            <button>
+                Explore
+            </button>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>⚡ Express Delivery</h3>
+
+            <p>
+                Urgent delivery in the shortest
+                possible time.
+            </p>
+
+            <button>
+                Explore
+            </button>
+
+        </div>
+
+
+    </div>
 
 </section>
+
 
 <section class="why">
 
-<h2>Why OR Delivery?</h2>
+    <h2>Why OR Delivery?</h2>
 
-<div class="grid">
 
-<div class="card">
-<h3>⚡ Fast Delivery</h3>
-<p>Quick and reliable delivery.</p>
-</div>
+    <div class="grid">
 
-<div class="card">
-<h3>💰 Affordable Prices</h3>
-<p>Competitive delivery prices.</p>
-</div>
 
-<div class="card">
-<h3>📍 Live Tracking</h3>
-<p>Track your order in real time.</p>
-</div>
+        <div class="card">
 
-</div>
+            <h3>⚡ Fast Delivery</h3>
+
+            <p>
+                Quick and reliable delivery.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>💰 Affordable Prices</h3>
+
+            <p>
+                Competitive delivery prices.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>📍 Live Tracking</h3>
+
+            <p>
+                Track your order in real time.
+            </p>
+
+        </div>
+
+
+    </div>
 
 </section>
 
+
 <footer>
 
-<a href="menu.html" class="btn">
-🍔 شوف القائمة
-</a>
+    <a href="menu.html" class="btn">
+        🍔 شوف القائمة
+    </a>
 
-<h2>OR Delivery</h2>
+    <h2>OR Delivery</h2>
 
-<p>
-Food • Colis • Personal Shopping • Express Delivery
-</p>
+    <p>
+        Food • Colis • Personal Shopping • Express Delivery
+    </p>
 
-<p>© 2026 OR Delivery</p>
+    <p>
+        © 2026 OR Delivery
+    </p>
 
 </footer>
 
+
 <script src="script.js"></script>
+
+
+<!-- Firebase -->
 
 <script type="module">
 
-import { initializeApp } from
-"https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+    // Firebase App
+    import { initializeApp } from
+    "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
 
-import { getAnalytics } from
-"https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js";
 
-const firebaseConfig = {
+    // Firebase Analytics
+    import { getAnalytics } from
+    "https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js";
 
-    apiKey: "AIzaSyCA0-yi6utUJaq4DeW_nIAqbMMCvHA5YV8",
 
-    authDomain: "or-delivery.firebaseapp.com",
+    // Firebase Firestore
+    import { getFirestore } from
+    "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
-    projectId: "or-delivery",
 
-    storageBucket: "or-delivery.firebasestorage.app",
+    // Firebase Configuration
 
-    messagingSenderId: "861150247174",
+    const firebaseConfig = {
 
-    appId: "1:861150247174:web:a53b38e85a5b55b78687",
+        apiKey: "AIzaSyCxLawlbfVBlt7DjYzMnfW3WIMvbgtsmQI",
 
-    measurementId: "G-QF1CYPZ2XJ"
+        authDomain: "or-delivery-e0a82.firebaseapp.com",
 
-};
+        projectId: "or-delivery-e0a82",
 
-const app = initializeApp(firebaseConfig);
+        storageBucket: "or-delivery-e0a82.firebasestorage.app",
 
-const analytics = getAnalytics(app);
+        messagingSenderId: "491769193881",
+
+        appId: "1:491769193881:web:67159246794a957f0edf08",
+
+        measurementId: "G-TWHMY1TCGV"
+
+    };
+
+
+    // Initialize Firebase
+
+    const app = initializeApp(firebaseConfig);
+
+
+    // Initialize Analytics
+
+    const analytics = getAnalytics(app);
+
+
+    // Initialize Firestore
+
+    const db = getFirestore(app);
+
+
+    // Test Firebase Connection
+
+    console.log("🔥 OR Delivery Firebase Connected!");
+
+    console.log("🔥 Firestore Ready!");
 
 </script>
+
 
 </body>
 </html>
