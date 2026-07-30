@@ -19,9 +19,9 @@
 
 <header>
 
-    <h1>🍽️ Restaurant Dashboard</h1>
+    <h1>🍽️ لوحة تحكم المطعم</h1>
 
-    <p>إدارة الطلبات الجديدة</p>
+    <p>طلبات الحرفاء</p>
 
 </header>
 
@@ -29,7 +29,7 @@
 
 <section class="menu">
 
-    <h2>📦 الطلبات</h2>
+    <h2>📦 الطلبات الجديدة</h2>
 
     <div id="orders">
 
@@ -73,7 +73,7 @@ from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 
 // =====================================
-// Firebase Configuration
+// Firebase الجديد OR Delivery
 // =====================================
 
 
@@ -97,11 +97,6 @@ const firebaseConfig = {
 
 
 
-// =====================================
-// Initialize Firebase
-// =====================================
-
-
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
@@ -112,7 +107,7 @@ console.log("🔥 Restaurant Dashboard Connected!");
 
 
 // =====================================
-// Orders Container
+// Orders
 // =====================================
 
 
@@ -122,29 +117,16 @@ document.getElementById("orders");
 
 
 
-// =====================================
-// Load Orders
-// =====================================
-
-
 async function loadOrders() {
 
 
-    ordersContainer.innerHTML = `
+    ordersContainer.innerHTML =
 
-        <p>
-
-            ⏳ جاري الاتصال بقاعدة البيانات...
-
-        </p>
-
-    `;
+    "<p>⏳ جاري تحميل الطلبات...</p>";
 
 
     try {
 
-
-        // Get ALL orders
 
         const snapshot =
 
@@ -164,14 +146,8 @@ async function loadOrders() {
         );
 
 
-
         ordersContainer.innerHTML = "";
 
-
-
-        // =====================================
-        // No Orders
-        // =====================================
 
 
         if (snapshot.empty) {
@@ -200,24 +176,10 @@ async function loadOrders() {
 
 
 
-        // =====================================
-        // Display Orders
-        // =====================================
-
-
         snapshot.forEach((orderDoc) => {
 
 
             const order = orderDoc.data();
-
-
-            console.log(
-
-                "📦 Order:",
-
-                order
-
-            );
 
 
 
@@ -230,12 +192,8 @@ async function loadOrders() {
 
 
 
-            // =====================================
-            // Items
-            // =====================================
-
-
             let itemsHTML = "";
+
 
 
             if (
@@ -249,52 +207,30 @@ async function loadOrders() {
 
                 itemsHTML =
 
-                order.items.map(
+                order.items.map(item => `
 
-                    item => `
+                    <li>
 
-                        <li>
+                        🍔 ${item.name}
 
-                            🍔
+                        -
 
-                            ${item.name || "منتج"}
+                        ${item.price}
 
-                            -
+                        د.ت
 
-                            ${item.price || 0}
+                    </li>
 
-                            د.ت
+                `).join("");
 
-                        </li>
-
-                    `
-
-                ).join("");
-
-
-            } else {
-
-
-                itemsHTML =
-
-                "<li>لا توجد تفاصيل</li>";
 
             }
 
 
 
-            // =====================================
-            // Order Card
-            // =====================================
-
-
             card.innerHTML = `
 
-                <h2>
-
-                    📦 طلب جديد
-
-                </h2>
+                <h2>📦 طلب جديد</h2>
 
 
                 <p>
@@ -319,11 +255,7 @@ async function loadOrders() {
 
                     👤 الحريف:
 
-                    <strong>
-
-                        ${order.clientName || "غير معروف"}
-
-                    </strong>
+                    ${order.clientName || "غير معروف"}
 
                 </p>
 
@@ -346,11 +278,7 @@ async function loadOrders() {
                 </p>
 
 
-                <h3>
-
-                    🍔 الطلب:
-
-                </h3>
+                <h3>🍔 الطلب:</h3>
 
 
                 <ul>
@@ -391,8 +319,6 @@ async function loadOrders() {
 
                     class="accept-button"
 
-                    data-id="${orderDoc.id}"
-
                 >
 
                     ✅ قبول الطلب
@@ -404,8 +330,6 @@ async function loadOrders() {
 
                     class="reject-button"
 
-                    data-id="${orderDoc.id}"
-
                 >
 
                     ❌ رفض الطلب
@@ -414,11 +338,6 @@ async function loadOrders() {
 
             `;
 
-
-
-            // =====================================
-            // Accept Button
-            // =====================================
 
 
             const acceptButton =
@@ -430,13 +349,21 @@ async function loadOrders() {
             );
 
 
+            const rejectButton =
+
+            card.querySelector(
+
+                ".reject-button"
+
+            );
+
+
+
             acceptButton.addEventListener(
 
                 "click",
 
-                () =>
-
-                updateOrderStatus(
+                () => updateOrderStatus(
 
                     orderDoc.id,
 
@@ -448,27 +375,11 @@ async function loadOrders() {
 
 
 
-            // =====================================
-            // Reject Button
-            // =====================================
-
-
-            const rejectButton =
-
-            card.querySelector(
-
-                ".reject-button"
-
-            );
-
-
             rejectButton.addEventListener(
 
                 "click",
 
-                () =>
-
-                updateOrderStatus(
+                () => updateOrderStatus(
 
                     orderDoc.id,
 
@@ -479,8 +390,6 @@ async function loadOrders() {
             );
 
 
-
-            // Add Card
 
             ordersContainer.appendChild(card);
 
@@ -509,7 +418,7 @@ async function loadOrders() {
 
                 <h2>
 
-                    ❌ صار خطأ في تحميل الطلبات
+                    ❌ صار خطأ
 
                 </h2>
 
@@ -517,13 +426,6 @@ async function loadOrders() {
                 <p>
 
                     ${error.message}
-
-                </p>
-
-
-                <p>
-
-                    افتح Console باش تشوف تفاصيل الخطأ.
 
                 </p>
 
@@ -538,7 +440,7 @@ async function loadOrders() {
 
 
 // =====================================
-// Update Order Status
+// Accept / Reject
 // =====================================
 
 
@@ -575,18 +477,32 @@ async function updateOrderStatus(
         );
 
 
-        alert(
+        if (
 
             newStatus === "accepted"
 
-            ? "✅ تم قبول الطلب"
-
-            : "❌ تم رفض الطلب"
-
-        );
+        ) {
 
 
-        // Reload orders
+            alert(
+
+                "✅ تم قبول الطلب بنجاح"
+
+            );
+
+
+        } else {
+
+
+            alert(
+
+                "❌ تم رفض الطلب"
+
+            );
+
+        }
+
+
 
         loadOrders();
 
@@ -608,7 +524,7 @@ async function updateOrderStatus(
 
         alert(
 
-            "❌ صار خطأ: " +
+            "❌ خطأ: " +
 
             error.message
 
@@ -621,7 +537,7 @@ async function updateOrderStatus(
 
 
 // =====================================
-// Start Dashboard
+// Start
 // =====================================
 
 
