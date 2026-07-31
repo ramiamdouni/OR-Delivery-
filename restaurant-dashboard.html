@@ -1,47 +1,16 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Restaurant Dashboard - OR Delivery</title><link rel="stylesheet" href="style.css"></head><body><header><h1>🍽️ لوحة تحكم المطعم</h1>
 
-<head>
+<p>طلبات الحرفاء</p>
 
-<meta charset="UTF-8">
+</header><section class="menu"><h2>📦 الطلبات الجديدة</h2>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<div id="orders">
 
-<title>Restaurant Dashboard - OR Delivery</title>
+    <p>⏳ جاري تحميل الطلبات...</p>
 
-<link rel="stylesheet" href="style.css">
+</div>
 
-</head>
-
-
-<body>
-
-
-<header>
-
-    <h1>🍽️ لوحة تحكم المطعم</h1>
-
-    <p>طلبات الحرفاء</p>
-
-</header>
-
-
-
-<section class="menu">
-
-    <h2>📦 الطلبات الجديدة</h2>
-
-    <div id="orders">
-
-        <p>⏳ جاري تحميل الطلبات...</p>
-
-    </div>
-
-</section>
-
-
-
-<script type="module">
+</section><script type="module">
 
 
 // =====================================
@@ -64,16 +33,19 @@ import {
 
     doc,
 
-    updateDoc
+    updateDoc,
+
+    query,
+
+    where
 
 }
 
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 
-
 // =====================================
-// Firebase الجديد OR Delivery
+// Firebase Configuration
 // =====================================
 
 
@@ -96,7 +68,6 @@ const firebaseConfig = {
 };
 
 
-
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
@@ -105,9 +76,36 @@ const db = getFirestore(app);
 console.log("🔥 Restaurant Dashboard Connected!");
 
 
+// =====================================
+// Get Restaurant ID
+// =====================================
+
+
+const urlParams =
+
+new URLSearchParams(
+
+    window.location.search
+
+);
+
+
+const restaurantId =
+
+urlParams.get("restaurantId");
+
+
+console.log(
+
+    "🍽️ Dashboard Restaurant ID:",
+
+    restaurantId
+
+);
+
 
 // =====================================
-// Orders
+// Orders Container
 // =====================================
 
 
@@ -115,6 +113,10 @@ const ordersContainer =
 
 document.getElementById("orders");
 
+
+// =====================================
+// Load Restaurant Orders
+// =====================================
 
 
 async function loadOrders() {
@@ -125,21 +127,83 @@ async function loadOrders() {
     "<p>⏳ جاري تحميل الطلبات...</p>";
 
 
+    // Check Restaurant ID
+
+
+    if (!restaurantId) {
+
+
+        ordersContainer.innerHTML = `
+
+            <div class="card">
+
+                <h2>❌ خطأ</h2>
+
+                <p>
+
+                    لم يتم تحديد المطعم.
+
+                </p>
+
+                <p>
+
+                    لازم تدخل للـDashboard برابط فيه restaurantId.
+
+                </p>
+
+            </div>
+
+        `;
+
+
+        return;
+
+    }
+
+
     try {
+
+
+        // Query orders for this restaurant
+
+
+        const ordersQuery =
+
+        query(
+
+            collection(
+
+                db,
+
+                "orders"
+
+            ),
+
+            where(
+
+                "restaurantId",
+
+                "==",
+
+                restaurantId
+
+            )
+
+        );
 
 
         const snapshot =
 
         await getDocs(
 
-            collection(db, "orders")
+            ordersQuery
 
         );
 
 
         console.log(
 
-            "📦 عدد الطلبات:",
+            "📦 عدد طلبات المطعم:",
 
             snapshot.size
 
@@ -147,7 +211,6 @@ async function loadOrders() {
 
 
         ordersContainer.innerHTML = "";
-
 
 
         if (snapshot.empty) {
@@ -175,226 +238,251 @@ async function loadOrders() {
         }
 
 
+        snapshot.forEach(
 
-        snapshot.forEach((orderDoc) => {
-
-
-            const order = orderDoc.data();
+            (orderDoc) => {
 
 
+                const order =
 
-            const card =
-
-            document.createElement("div");
-
-
-            card.className = "card";
+                orderDoc.data();
 
 
+                const card =
 
-            let itemsHTML = "";
+                document.createElement(
 
+                    "div"
 
-
-            if (
-
-                order.items &&
-
-                Array.isArray(order.items)
-
-            ) {
+                );
 
 
-                itemsHTML =
+                card.className = "card";
 
-                order.items.map(item => `
 
-                    <li>
+                let itemsHTML = "";
 
-                        🍔 ${item.name}
 
-                        -
+                if (
 
-                        ${item.price}
+                    order.items &&
+
+                    Array.isArray(
+
+                        order.items
+
+                    )
+
+                ) {
+
+
+                    itemsHTML =
+
+                    order.items.map(
+
+                        item => `
+
+                            <li>
+
+                                🍔 ${item.name}
+
+                                -
+
+                                ${item.price}
+
+                                د.ت
+
+                            </li>
+
+                        `
+
+                    ).join("");
+
+
+                }
+
+
+                card.innerHTML = `
+
+                    <h2>
+
+                        📦 طلب جديد
+
+                    </h2>
+
+
+                    <p>
+
+                        🆔 رقم الطلب:
+
+                        <br>
+
+                        <strong>
+
+                            ${orderDoc.id}
+
+                        </strong>
+
+                    </p>
+
+
+                    <hr>
+
+
+                    <p>
+
+                        👤 الحريف:
+
+                        ${order.clientName || "غير معروف"}
+
+                    </p>
+
+
+                    <p>
+
+                        📞 الهاتف:
+
+                        ${order.phone || "غير متوفر"}
+
+                    </p>
+
+
+                    <p>
+
+                        📍 العنوان:
+
+                        ${order.address || "غير متوفر"}
+
+                    </p>
+
+
+                    <h3>
+
+                        🍔 الطلب:
+
+                    </h3>
+
+
+                    <ul>
+
+                        ${itemsHTML}
+
+                    </ul>
+
+
+                    <h3>
+
+                        💰 المجموع:
+
+                        ${order.total || 0}
 
                         د.ت
 
-                    </li>
+                    </h3>
 
-                `).join("");
+
+                    <p>
+
+                        📌 الحالة:
+
+                        <strong>
+
+                            ${order.status || "pending"}
+
+                        </strong>
+
+                    </p>
+
+
+                    <br>
+
+
+                    <button
+
+                        class="accept-button"
+
+                        ${order.status !== "pending" ? "disabled" : ""}
+
+                    >
+
+                        ✅ قبول الطلب
+
+                    </button>
+
+
+                    <button
+
+                        class="reject-button"
+
+                        ${order.status !== "pending" ? "disabled" : ""}
+
+                    >
+
+                        ❌ رفض الطلب
+
+                    </button>
+
+                `;
+
+
+                const acceptButton =
+
+                card.querySelector(
+
+                    ".accept-button"
+
+                );
+
+
+                const rejectButton =
+
+                card.querySelector(
+
+                    ".reject-button"
+
+                );
+
+
+                acceptButton.addEventListener(
+
+                    "click",
+
+                    () => updateOrderStatus(
+
+                        orderDoc.id,
+
+                        "accepted"
+
+                    )
+
+                );
+
+
+                rejectButton.addEventListener(
+
+                    "click",
+
+                    () => updateOrderStatus(
+
+                        orderDoc.id,
+
+                        "rejected"
+
+                    )
+
+                );
+
+
+                ordersContainer.appendChild(
+
+                    card
+
+                );
 
 
             }
 
-
-
-            card.innerHTML = `
-
-                <h2>📦 طلب جديد</h2>
-
-
-                <p>
-
-                    🆔 رقم الطلب:
-
-                    <br>
-
-                    <strong>
-
-                        ${orderDoc.id}
-
-                    </strong>
-
-                </p>
-
-
-                <hr>
-
-
-                <p>
-
-                    👤 الحريف:
-
-                    ${order.clientName || "غير معروف"}
-
-                </p>
-
-
-                <p>
-
-                    📞 الهاتف:
-
-                    ${order.phone || "غير متوفر"}
-
-                </p>
-
-
-                <p>
-
-                    📍 العنوان:
-
-                    ${order.address || "غير متوفر"}
-
-                </p>
-
-
-                <h3>🍔 الطلب:</h3>
-
-
-                <ul>
-
-                    ${itemsHTML}
-
-                </ul>
-
-
-                <h3>
-
-                    💰 المجموع:
-
-                    ${order.total || 0}
-
-                    د.ت
-
-                </h3>
-
-
-                <p>
-
-                    📌 الحالة:
-
-                    <strong>
-
-                        ${order.status || "pending"}
-
-                    </strong>
-
-                </p>
-
-
-                <br>
-
-
-                <button
-
-                    class="accept-button"
-
-                >
-
-                    ✅ قبول الطلب
-
-                </button>
-
-
-                <button
-
-                    class="reject-button"
-
-                >
-
-                    ❌ رفض الطلب
-
-                </button>
-
-            `;
-
-
-
-            const acceptButton =
-
-            card.querySelector(
-
-                ".accept-button"
-
-            );
-
-
-            const rejectButton =
-
-            card.querySelector(
-
-                ".reject-button"
-
-            );
-
-
-
-            acceptButton.addEventListener(
-
-                "click",
-
-                () => updateOrderStatus(
-
-                    orderDoc.id,
-
-                    "accepted"
-
-                )
-
-            );
-
-
-
-            rejectButton.addEventListener(
-
-                "click",
-
-                () => updateOrderStatus(
-
-                    orderDoc.id,
-
-                    "rejected"
-
-                )
-
-            );
-
-
-
-            ordersContainer.appendChild(card);
-
-
-        });
+        );
 
 
     }
@@ -438,9 +526,8 @@ async function loadOrders() {
 }
 
 
-
 // =====================================
-// Accept / Reject
+// Accept / Reject Order
 // =====================================
 
 
@@ -470,7 +557,9 @@ async function updateOrderStatus(
 
             {
 
-                status: newStatus
+                status:
+
+                newStatus
 
             }
 
@@ -479,7 +568,9 @@ async function updateOrderStatus(
 
         if (
 
-            newStatus === "accepted"
+            newStatus ===
+
+            "accepted"
 
         ) {
 
@@ -491,7 +582,9 @@ async function updateOrderStatus(
             );
 
 
-        } else {
+        }
+
+        else {
 
 
             alert(
@@ -501,7 +594,6 @@ async function updateOrderStatus(
             );
 
         }
-
 
 
         loadOrders();
@@ -535,7 +627,6 @@ async function updateOrderStatus(
 }
 
 
-
 // =====================================
 // Start
 // =====================================
@@ -544,9 +635,4 @@ async function updateOrderStatus(
 loadOrders();
 
 
-</script>
-
-
-</body>
-
-</html>
+</script></body></html>
