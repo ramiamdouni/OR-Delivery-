@@ -1,96 +1,172 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>مطعمك - OR Delivery</title><link rel="stylesheet" href="style.css"></head><body><header><h1>🍽️ مطعمك</h1>
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>OR Delivery - Restaurant Menu</title><link rel="stylesheet" href="style.css"></head><body><header><h1>🍽️ OR Delivery</h1>
 
-<p>
-    اطلب أكلك ويوصلك مع OR Delivery 🛵
-</p>
+<p>اختار أكلك واطلب توّا 🛵</p>
 
-</header><section class="menu"><div class="card"><img src="pizza.jpg" alt="Pizza">
+</header><section class="menu"><h2>🍔 قائمة الطعام</h2>
 
-<h2>Pizza 4 Fromages</h2>
 
-<p>بيتزا بالجبن</p>
+<div class="card">
 
-<span>18 د.ت</span>
+    <h2>🍕 Pizza 4 Fromages</h2>
 
-<button onclick="addToCart('Pizza 4 Fromages',18)">
-    أضف للسلة
-</button>
+    <p>بيتزا بالجبن</p>
 
-</div><div class="card"><img src="burger.jpg" alt="Burger">
+    <strong>18 د.ت</strong>
 
-<h2>Burger Maison</h2>
+    <br><br>
 
-<p>برغر منزلي</p>
+    <button
+        onclick="addToCart('Pizza 4 Fromages', 18)"
+    >
+        أضف للسلة
+    </button>
 
-<span>12 د.ت</span>
+</div>
 
-<button onclick="addToCart('Burger Maison',12)">
-    أضف للسلة
-</button>
 
-</div><div class="card"><img src="frites.jpg" alt="Frites">
 
-<h2>Frites</h2>
+<div class="card">
 
-<p>بطاطا مقلية</p>
+    <h2>🍔 Burger Maison</h2>
 
-<span>5 د.ت</span>
+    <p>برغر منزلي</p>
 
-<button onclick="addToCart('Frites',5)">
-    أضف للسلة
-</button>
+    <strong>12 د.ت</strong>
 
-</div></section><div class="cart"><h2>🛒 طلبك</h2><ul id="cart"></ul><h3>المجموع:
+    <br><br>
 
-<span id="total">0</span>
+    <button
+        onclick="addToCart('Burger Maison', 12)"
+    >
+        أضف للسلة
+    </button>
 
-د.ت
+</div>
 
-</h3><hr><h2>📦 معلومات التوصيل</h2><input
-type="text"
-id="clientName"
-placeholder="اسمك الكامل"
 
-«»
+
+<div class="card">
+
+    <h2>🍟 Frites</h2>
+
+    <p>بطاطا مقلية</p>
+
+    <strong>5 د.ت</strong>
+
+    <br><br>
+
+    <button
+        onclick="addToCart('Frites', 5)"
+    >
+        أضف للسلة
+    </button>
+
+</div>
+
+</section><section class="cart"><h2>🛒 طلبك</h2>
+
+
+<ul id="cart">
+
+    <li>السلة فارغة</li>
+
+</ul>
+
+
+<h3>
+
+    💰 المجموع:
+
+    <span id="total">0</span>
+
+    د.ت
+
+</h3>
+
+
+
+<hr>
+
+
+
+<h2>📦 معلومات التوصيل</h2>
+
 
 <input
-type="tel"
-id="phone"
-placeholder="رقم الهاتف"
+    type="text"
+    id="clientName"
+    placeholder="👤 اسمك الكامل"
+>
 
-«»
 
 <input
-type="text"
-id="address"
-placeholder="عنوان التوصيل"
+    type="tel"
+    id="phone"
+    placeholder="📞 رقم الهاتف"
+>
 
-«»
+
+<input
+    type="text"
+    id="address"
+    placeholder="📍 عنوان التوصيل"
+>
+
+
 
 <button
-class="order"
-onclick="sendOrder()"
+    id="orderButton"
+    class="order"
+    onclick="sendOrder()"
+>
 
-«»
+    ✅ تأكيد الطلب
 
-تأكيد الطلب
-
-</button><div
-id="confirmation"
-style="display:none;"
-><h2>
-📦 حالة طلبك
-</h2><p>
-رقم طلبك:
-<strong id="orderNumber"></strong>
-</p><p id="status">
-⏳ طلبك قيد الانتظار...
-</p></div></div><script type="module">
+</button>
 
 
-// ======================================
+
+<div
+    id="confirmation"
+    style="display:none;"
+>
+
+    <hr>
+
+    <h2>📦 متابعة طلبك</h2>
+
+
+    <p>
+
+        🆔 رقم الطلب:
+
+        <strong id="orderNumber"></strong>
+
+    </p>
+
+
+    <p>
+
+        📌 حالة الطلب:
+
+    </p>
+
+
+    <h3 id="status">
+
+        ⏳ طلبك قيد الانتظار...
+
+    </h3>
+
+
+</div>
+
+</section><script type="module">
+
+
+// ==========================================
 // Firebase
-// ======================================
+// ==========================================
 
 
 import { initializeApp }
@@ -117,9 +193,10 @@ import {
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 
-// ======================================
+
+// ==========================================
 // Firebase Configuration
-// ======================================
+// ==========================================
 
 
 const firebaseConfig = {
@@ -141,17 +218,24 @@ const firebaseConfig = {
 };
 
 
+
+// ==========================================
+// Start Firebase
+// ==========================================
+
+
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 
 
-console.log("🔥 OR Delivery Firebase Connected!");
+console.log("🔥 Firebase Connected!");
 
 
-// ======================================
-// Restaurant ID
-// ======================================
+
+// ==========================================
+// Get Restaurant ID
+// ==========================================
 
 
 const urlParams =
@@ -165,7 +249,11 @@ new URLSearchParams(
 
 const restaurantId =
 
-urlParams.get("restaurantId");
+urlParams.get(
+
+    "restaurantId"
+
+);
 
 
 console.log(
@@ -177,19 +265,21 @@ console.log(
 );
 
 
-// ======================================
+
+// ==========================================
 // Cart
-// ======================================
+// ==========================================
 
-
-let total = 0;
 
 let items = [];
 
+let total = 0;
 
-// ======================================
-// Add Product
-// ======================================
+
+
+// ==========================================
+// Add To Cart
+// ==========================================
 
 
 window.addToCart = function(
@@ -213,43 +303,98 @@ window.addToCart = function(
     total += price;
 
 
+    updateCart();
+
+};
+
+
+
+// ==========================================
+// Update Cart
+// ==========================================
+
+
+function updateCart() {
+
+
+    const cart =
+
     document.getElementById(
 
         "cart"
 
-    ).innerHTML =
+    );
 
-    items.map(item =>
 
-        "<li>" +
-
-        item.name +
-
-        " - " +
-
-        item.price +
-
-        " د.ت</li>"
-
-    ).join("");
-
+    const totalElement =
 
     document.getElementById(
 
         "total"
 
-    ).innerText = total;
+    );
 
 
-};
+    if (
+
+        items.length === 0
+
+    ) {
 
 
-// ======================================
+        cart.innerHTML =
+
+        "<li>السلة فارغة</li>";
+
+
+    }
+
+    else {
+
+
+        cart.innerHTML =
+
+        items.map(
+
+            (item, index) => `
+
+                <li>
+
+                    ${item.name}
+
+                    -
+
+                    ${item.price}
+
+                    د.ت
+
+                </li>
+
+            `
+
+        ).join("");
+
+    }
+
+
+    totalElement.innerText =
+
+    total;
+
+}
+
+
+
+// ==========================================
 // Watch Order Status
-// ======================================
+// ==========================================
 
 
-function watchOrderStatus(orderId) {
+function watchOrderStatus(
+
+    orderId
+
+) {
 
 
     const orderRef = doc(
@@ -270,7 +415,11 @@ function watchOrderStatus(orderId) {
         (snapshot) => {
 
 
-            if (!snapshot.exists()) {
+            if (
+
+                !snapshot.exists()
+
+            ) {
 
                 return;
 
@@ -302,7 +451,7 @@ function watchOrderStatus(orderId) {
 
                 statusElement.innerText =
 
-                "⏳ طلبك قيد الانتظار...";
+                "⏳ طلبك قيد الانتظار عند المطعم";
 
 
             }
@@ -319,7 +468,7 @@ function watchOrderStatus(orderId) {
 
                 statusElement.innerText =
 
-                "✅ تم قبول طلبك من المطعم!";
+                "✅ المطعم قبل طلبك! جاري تحضير الطلب";
 
 
             }
@@ -336,7 +485,7 @@ function watchOrderStatus(orderId) {
 
                 statusElement.innerText =
 
-                "❌ للأسف، المطعم رفض طلبك.";
+                "❌ للأسف، المطعم رفض طلبك";
 
             }
 
@@ -355,7 +504,6 @@ function watchOrderStatus(orderId) {
 
             );
 
-
         }
 
     );
@@ -363,9 +511,10 @@ function watchOrderStatus(orderId) {
 }
 
 
-// ======================================
+
+// ==========================================
 // Send Order
-// ======================================
+// ==========================================
 
 
 window.sendOrder = async function() {
@@ -416,12 +565,24 @@ window.sendOrder = async function() {
     .trim();
 
 
-    if (!restaurantId) {
+
+    // ======================================
+
+    // Check Restaurant
+
+    // ======================================
+
+
+    if (
+
+        !restaurantId
+
+    ) {
 
 
         alert(
 
-            "❌ لم يتم تحديد المطعم."
+            "❌ المطعم غير محدد"
 
         );
 
@@ -429,6 +590,14 @@ window.sendOrder = async function() {
         return;
 
     }
+
+
+
+    // ======================================
+
+    // Check Cart
+
+    // ======================================
 
 
     if (
@@ -440,7 +609,7 @@ window.sendOrder = async function() {
 
         alert(
 
-            "⚠️ أضف منتج للسلة أولاً"
+            "⚠️ السلة فارغة، أضف طلبك أولاً"
 
         );
 
@@ -448,6 +617,14 @@ window.sendOrder = async function() {
         return;
 
     }
+
+
+
+    // ======================================
+
+    // Check Client Information
+
+    // ======================================
 
 
     if (
@@ -473,24 +650,35 @@ window.sendOrder = async function() {
     }
 
 
+
     const button =
 
-    document.querySelector(
+    document.getElementById(
 
-        ".order"
+        "orderButton"
 
     );
 
 
-    button.disabled = true;
+    button.disabled =
+
+    true;
 
 
     button.innerText =
 
-    "جاري إرسال الطلب...";
+    "⏳ جاري إرسال الطلب...";
+
 
 
     try {
+
+
+        // ==================================
+
+        // Create Order
+
+        // ==================================
 
 
         const orderRef =
@@ -547,10 +735,27 @@ window.sendOrder = async function() {
 
                 serverTimestamp()
 
-
             }
 
         );
+
+
+
+        console.log(
+
+            "✅ Order Created:",
+
+            orderRef.id
+
+        );
+
+
+
+        // ==================================
+
+        // Show Confirmation
+
+        // ==================================
 
 
         document
@@ -572,26 +777,30 @@ window.sendOrder = async function() {
 
             "orderNumber"
 
-        ).innerText =
+        )
+
+        .innerText =
 
         orderRef.id;
 
+
+
+        // Hide Button
 
         button.style.display =
 
         "none";
 
 
+
+        // ==================================
+
+        // Watch Status
+
+        // ==================================
+
+
         watchOrderStatus(
-
-            orderRef.id
-
-        );
-
-
-        console.log(
-
-            "✅ Order Created:",
 
             orderRef.id
 
@@ -615,7 +824,7 @@ window.sendOrder = async function() {
 
         alert(
 
-            "❌ خطأ: " +
+            "❌ صار خطأ: " +
 
             error.message
 
@@ -629,7 +838,7 @@ window.sendOrder = async function() {
 
         button.innerText =
 
-        "تأكيد الطلب";
+        "✅ تأكيد الطلب";
 
     }
 
