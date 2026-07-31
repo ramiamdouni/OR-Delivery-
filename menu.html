@@ -1,200 +1,91 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>مطعمك - OR Delivery</title><link rel="stylesheet" href="style.css"></head><body><header><h1>🍽️ مطعمك</h1>
 
-<head>
+<p>
+    اطلب أكلك ويوصلك مع OR Delivery 🛵
+</p>
 
-<meta charset="UTF-8">
+</header><section class="menu"><div class="card"><img src="pizza.jpg" alt="Pizza">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<h2>Pizza 4 Fromages</h2>
 
-<title>مطعمك - OR Delivery</title>
+<p>بيتزا بالجبن</p>
 
-<link rel="stylesheet" href="style.css">
+<span>18 د.ت</span>
 
-</head>
+<button onclick="addToCart('Pizza 4 Fromages',18)">
+    أضف للسلة
+</button>
 
+</div><div class="card"><img src="burger.jpg" alt="Burger">
 
-<body>
+<h2>Burger Maison</h2>
 
+<p>برغر منزلي</p>
 
-<header>
+<span>12 د.ت</span>
 
-    <h1>🍽️ مطعمك</h1>
+<button onclick="addToCart('Burger Maison',12)">
+    أضف للسلة
+</button>
 
-    <p>
-        اطلب أكلك ويوصلك مع OR Delivery 🛵
-    </p>
+</div><div class="card"><img src="frites.jpg" alt="Frites">
 
-</header>
+<h2>Frites</h2>
 
+<p>بطاطا مقلية</p>
 
+<span>5 د.ت</span>
 
-<section class="menu">
+<button onclick="addToCart('Frites',5)">
+    أضف للسلة
+</button>
 
-
-<div class="card">
-
-    <img src="pizza.jpg" alt="Pizza">
-
-    <h2>Pizza 4 Fromages</h2>
-
-    <p>بيتزا بالجبن</p>
-
-    <span>18 د.ت</span>
-
-    <button onclick="addToCart('Pizza 4 Fromages',18)">
-        أضف للسلة
-    </button>
-
-</div>
-
-
-
-<div class="card">
-
-    <img src="burger.jpg" alt="Burger">
-
-    <h2>Burger Maison</h2>
-
-    <p>برغر منزلي</p>
-
-    <span>12 د.ت</span>
-
-    <button onclick="addToCart('Burger Maison',12)">
-        أضف للسلة
-    </button>
-
-</div>
-
-
-
-<div class="card">
-
-    <img src="frites.jpg" alt="Frites">
-
-    <h2>Frites</h2>
-
-    <p>بطاطا مقلية</p>
-
-    <span>5 د.ت</span>
-
-    <button onclick="addToCart('Frites',5)">
-        أضف للسلة
-    </button>
-
-</div>
-
-
-</section>
-
-
-
-<div class="cart">
-
-
-<h2>🛒 طلبك</h2>
-
-
-<ul id="cart"></ul>
-
-
-<h3>
-
-المجموع:
+</div></section><div class="cart"><h2>🛒 طلبك</h2><ul id="cart"></ul><h3>المجموع:
 
 <span id="total">0</span>
 
 د.ت
 
-</h3>
-
-
-
-<hr>
-
-
-
-<h2>📦 معلومات التوصيل</h2>
-
-
-
-<input
+</h3><hr><h2>📦 معلومات التوصيل</h2><input
 type="text"
 id="clientName"
 placeholder="اسمك الكامل"
->
 
-
+«»
 
 <input
 type="tel"
 id="phone"
 placeholder="رقم الهاتف"
->
 
-
+«»
 
 <input
 type="text"
 id="address"
 placeholder="عنوان التوصيل"
->
 
-
+«»
 
 <button
 class="order"
 onclick="sendOrder()"
->
+
+«»
 
 تأكيد الطلب
 
-</button>
-
-
-
-<div
+</button><div
 id="confirmation"
 style="display:none;"
->
-
-
-<h2>
-✅ تم تأكيد طلبك بنجاح
-</h2>
-
-
-<p>
-شكراً لك على طلبك من OR Delivery 🛵
-</p>
-
-
-<p>
-
+><h2>
+📦 حالة طلبك
+</h2><p>
 رقم طلبك:
-
 <strong id="orderNumber"></strong>
-
-</p>
-
-
-<p>
-سيتم التواصل معك لتأكيد الطلب.
-</p>
-
-
-</div>
-
-
-
-<p id="status"></p>
-
-
-</div>
-
-
-
-<script type="module">
+</p><p id="status">
+⏳ طلبك قيد الانتظار...
+</p></div></div><script type="module">
 
 
 // ======================================
@@ -215,17 +106,19 @@ import {
 
     addDoc,
 
-    serverTimestamp
+    serverTimestamp,
+
+    doc,
+
+    onSnapshot
 
 }
 
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 
-
 // ======================================
 // Firebase Configuration
-// نفس المشروع الجديد
 // ======================================
 
 
@@ -248,24 +141,40 @@ const firebaseConfig = {
 };
 
 
-
-// ======================================
-// Initialize Firebase
-// ======================================
-
-
 const app = initializeApp(firebaseConfig);
 
-
 const db = getFirestore(app);
-
 
 
 console.log("🔥 OR Delivery Firebase Connected!");
 
 
-console.log("🔥 Orders Firestore Ready!");
+// ======================================
+// Restaurant ID
+// ======================================
 
+
+const urlParams =
+
+new URLSearchParams(
+
+    window.location.search
+
+);
+
+
+const restaurantId =
+
+urlParams.get("restaurantId");
+
+
+console.log(
+
+    "🍽️ Restaurant ID:",
+
+    restaurantId
+
+);
 
 
 // ======================================
@@ -275,17 +184,21 @@ console.log("🔥 Orders Firestore Ready!");
 
 let total = 0;
 
-
 let items = [];
 
 
-
 // ======================================
-// Add Product To Cart
+// Add Product
 // ======================================
 
 
-window.addToCart = function(name, price) {
+window.addToCart = function(
+
+    name,
+
+    price
+
+) {
 
 
     items.push({
@@ -300,8 +213,11 @@ window.addToCart = function(name, price) {
     total += price;
 
 
+    document.getElementById(
 
-    document.getElementById("cart").innerHTML =
+        "cart"
+
+    ).innerHTML =
 
     items.map(item =>
 
@@ -318,14 +234,133 @@ window.addToCart = function(name, price) {
     ).join("");
 
 
+    document.getElementById(
 
-    document.getElementById("total").innerHTML =
+        "total"
 
-    total;
+    ).innerText = total;
 
 
 };
 
+
+// ======================================
+// Watch Order Status
+// ======================================
+
+
+function watchOrderStatus(orderId) {
+
+
+    const orderRef = doc(
+
+        db,
+
+        "orders",
+
+        orderId
+
+    );
+
+
+    onSnapshot(
+
+        orderRef,
+
+        (snapshot) => {
+
+
+            if (!snapshot.exists()) {
+
+                return;
+
+            }
+
+
+            const order =
+
+            snapshot.data();
+
+
+            const statusElement =
+
+            document.getElementById(
+
+                "status"
+
+            );
+
+
+            if (
+
+                order.status ===
+
+                "pending"
+
+            ) {
+
+
+                statusElement.innerText =
+
+                "⏳ طلبك قيد الانتظار...";
+
+
+            }
+
+
+            else if (
+
+                order.status ===
+
+                "accepted"
+
+            ) {
+
+
+                statusElement.innerText =
+
+                "✅ تم قبول طلبك من المطعم!";
+
+
+            }
+
+
+            else if (
+
+                order.status ===
+
+                "rejected"
+
+            ) {
+
+
+                statusElement.innerText =
+
+                "❌ للأسف، المطعم رفض طلبك.";
+
+            }
+
+
+        },
+
+
+        (error) => {
+
+
+            console.error(
+
+                "❌ Status Error:",
+
+                error
+
+            );
+
+
+        }
+
+    );
+
+}
 
 
 // ======================================
@@ -340,41 +375,67 @@ window.sendOrder = async function() {
 
     document
 
-    .getElementById("clientName")
+    .getElementById(
+
+        "clientName"
+
+    )
 
     .value
 
     .trim();
-
 
 
     const phone =
 
     document
 
-    .getElementById("phone")
+    .getElementById(
+
+        "phone"
+
+    )
 
     .value
 
     .trim();
-
 
 
     const address =
 
     document
 
-    .getElementById("address")
+    .getElementById(
+
+        "address"
+
+    )
 
     .value
 
     .trim();
 
 
+    if (!restaurantId) {
 
-    // Check Cart
 
-    if (items.length === 0) {
+        alert(
+
+            "❌ لم يتم تحديد المطعم."
+
+        );
+
+
+        return;
+
+    }
+
+
+    if (
+
+        items.length === 0
+
+    ) {
 
 
         alert(
@@ -388,9 +449,6 @@ window.sendOrder = async function() {
 
     }
 
-
-
-    // Check Customer Info
 
     if (
 
@@ -415,11 +473,13 @@ window.sendOrder = async function() {
     }
 
 
-
     const button =
 
-    document.querySelector(".order");
+    document.querySelector(
 
+        ".order"
+
+    );
 
 
     button.disabled = true;
@@ -430,19 +490,8 @@ window.sendOrder = async function() {
     "جاري إرسال الطلب...";
 
 
-
-    console.log(
-
-        "📦 بدأ إرسال الطلب إلى Firebase"
-
-    );
-
-
-
     try {
 
-
-        // Add Order To Firestore
 
         const orderRef =
 
@@ -457,6 +506,12 @@ window.sendOrder = async function() {
             ),
 
             {
+
+
+                restaurantId:
+
+                restaurantId,
+
 
                 clientName:
 
@@ -492,13 +547,11 @@ window.sendOrder = async function() {
 
                 serverTimestamp()
 
+
             }
 
         );
 
-
-
-        // Success
 
         document
 
@@ -513,39 +566,27 @@ window.sendOrder = async function() {
         "block";
 
 
-
         document
 
         .getElementById(
 
             "orderNumber"
 
-        )
-
-        .innerText =
+        ).innerText =
 
         orderRef.id;
-
-
-
-        document
-
-        .getElementById(
-
-            "status"
-
-        )
-
-        .innerText =
-
-        "تم إرسال الطلب إلى OR Delivery";
-
 
 
         button.style.display =
 
         "none";
 
+
+        watchOrderStatus(
+
+            orderRef.id
+
+        );
 
 
         console.log(
@@ -581,28 +622,18 @@ window.sendOrder = async function() {
         );
 
 
-
         button.disabled =
 
         false;
-
 
 
         button.innerText =
 
         "تأكيد الطلب";
 
-
     }
-
 
 };
 
 
-</script>
-
-
-
-</body>
-
-</html>
+</script></body></html>
